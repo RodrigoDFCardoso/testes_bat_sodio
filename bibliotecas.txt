@@ -1,0 +1,9 @@
+Bibliotecas qu epodem ajudar:
+
+- https://github.com/elschopi/TI_INA226_micropython
+- https://github.com/jean-claudeF/INA226
+- https://github.com/elschopi/TI_INA226_micropython/tree/master
+
+- https://github.com/joy-it/ADS1115-Micropython
+- https://github.com/wollewald/ADS1115_mpy
+- https://pypi.org/project/ADS1115-mic-py/#files
