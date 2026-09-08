@@ -11,6 +11,14 @@
 #  INA226 (medidor de tensão de barramento e queda no shunt)
 # ================================================================
 
+from machine import PWM, Pin  # PWM, GPIO
+from machine import SoftI2C, ADC
+import time
+
+shunt_resistor = 0.1
+
+i2c = SoftI2C(scl=Pin(19), sda=Pin(18))
+
 INA226_ADDR = 0x40            # Endereço padrão
 # Registradores do INA226
 CONFIG_REG         = 0x00
@@ -96,5 +104,10 @@ while True:
     v_bus     = ler_tensao_bus()
     corrente  = ler_corrente(shunt_resistor)      # mA
     potencia  = calcular_potencia(v_bus, corrente) # mW
-    exibir_no_oled(v_bus, corrente, potencia)
+    #exibir_no_oled(v_bus, corrente, potencia)
+    print("V: {:.2f}V".format(v_bus))
+    print("I: {:+.2f}mA".format(corrente))
+    print("P: {:+.2f}mW".format(potencia))
+    print("Shunt:{:+.3f}mV".format(ler_tensao_shunt() * -1000.0))
+
     time.sleep(1)
