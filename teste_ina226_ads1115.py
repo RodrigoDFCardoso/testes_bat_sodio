@@ -114,6 +114,8 @@ def listar_ina226(i2c):
                     endereco
                 )
             )
+        else:
+            print("deu ruim")
 
 
 def ler_ina226(i2c, endereco):
@@ -132,3 +134,8 @@ def ler_ina226(i2c, endereco):
     # a biblioteca do INA226 utilizada.
 
     return 0, 0
+
+
+print(inicializar_ads1115())
+
+print(ler_ads1115(inicializar_ads1115(), 2))
