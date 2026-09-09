@@ -1,0 +1,55 @@
+
+
+
+
+
+# ads1115
+dev = I2C(0, scl=Pin(9), sda=Pin(8))
+address = 72
+
+# ============================================================
+# Leitura de um canal do ADS1115
+#
+# channel:
+# 0 -> A0
+# 1 -> A1
+# 2 -> A2
+# 3 -> A3
+# ============================================================
+
+# ina226
+i2c_ina226 = SoftI2C(scl=Pin(19), sda=Pin(18)) #definir qual pin i2c está
+ina = ina226.INA226(i2c_ina226, address)
+
+## enderecos ina's
+options = {0 : ['D', 76], 1 : ['C', 72], 2 : ['B', 68], 3 : ['A', 64]}
+
+'''
+# Dados de teste
+
+dados = {
+    "timestamp": time.time() + 3* 3600,
+
+    "channel": "A",
+    "temp": 21.5,
+    "voltage": 4.1,
+    "current": 428,
+
+    "power": 1.75
+}
+
+# Envia
+sucesso = send.enviar_dados(dados, GOOGLE_SCRIPT_URL)
+
+print()
+
+if sucesso:
+    print("==============================")
+    print(" TESTE CONCLUIDO COM SUCESSO")
+    print("==============================")
+else:
+    print("==============================")
+    print(" FALHA NO ENVIO")
+    print("==============================")
+    
+'''
