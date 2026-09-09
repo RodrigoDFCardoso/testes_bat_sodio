@@ -19,7 +19,7 @@ shunt_resistor = 0.1
 
 i2c = SoftI2C(scl=Pin(19), sda=Pin(18))
 
-INA226_ADDR = 0x40            # Endereço padrão
+INA226_ADDR = 68            # Endereço padrão
 # Registradores do INA226
 CONFIG_REG         = 0x00
 SHUNT_VOLTAGE_REG  = 0x01
@@ -91,7 +91,7 @@ def map_value(value, in_min, in_max, out_min, out_max):
     return (value - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
 
-
+'''
 #testar e depois excluir este while
 
  # ----------------------------------------
@@ -112,5 +112,6 @@ while True:
     print("P: {:+.2f}mW".format(potencia))
     print("Shunt:{:+.3f}mV".format(ler_tensao_shunt(INA226_ADDR) * -1000.0))
 
-    time.sleep(10)
+    time.sleep(1)
 
+'''

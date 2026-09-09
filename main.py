@@ -26,8 +26,11 @@ options = {0 : ['D', 76], 1 : ['C', 72], 2 : ['B', 68], 3 : ['A', 64]}
 # CONFIGURAÇÕES
 # ============================================================
 
-WIFI_SSID = "Ap1208_2G"
-WIFI_PASSWORD = "20081995"
+# WIFI_SSID = "Ap1208_2G"
+# WIFI_PASSWORD = "20081995"
+
+WIFI_SSID = "Wifi BMS"
+WIFI_PASSWORD = "testebms2024"
 
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
 
@@ -44,7 +47,7 @@ print("==============================")
 # Conecta ao Wi-Fi
 wifi = send.conectar_wifi(WIFI_SSID, WIFI_PASSWORD)
 
-
+# wifi = True
 
 if wifi is None:
     print("Não foi possível conectar ao Wi-Fi")
@@ -56,14 +59,14 @@ else:
         for i in range(4):
             ina226.configurar_ina226(options[i][1]) # para cada endereco do ina226 uma config é feita
 
-            temp = ads1115.get_value()[1]
+            temp = ads1115.get_value(i)
             v_bus = ina226.ler_tensao_bus(options[i][1])
             corrente_mA = ina226.ler_corrente(options[i][1])
 
             dado_envio = {
                 "timestamp": time.time() + 3* 3600,
                 "channel": options[i][0],
-                "temp": temp, # falta converter tensao para temperatura
+                "temp": temp[1], # falta converter tensao para temperatura
                 "voltage": v_bus,
                 "current": corrente_mA,
 
@@ -74,6 +77,7 @@ else:
 
             # Envia
             sucesso = send.enviar_dados(dado_envio, GOOGLE_SCRIPT_URL)
+            # sucesso = True
 
             print()
 
