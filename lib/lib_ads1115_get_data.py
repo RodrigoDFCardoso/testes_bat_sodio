@@ -163,8 +163,10 @@ def get_value(channel):
         value = readValueFrom(channel)
 
         value_voltage = voltage(value)
+        
+        temp = 0.0030908 * value - 25.04
 
-        return value, value_voltage
+        return value, value_voltage, temp
 
     except Exception as e:
 

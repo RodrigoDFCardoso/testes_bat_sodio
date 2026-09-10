@@ -141,12 +141,15 @@ while True:
             raw = ads.read(canal)
 
             voltage = raw * 4.096 / 32768
+            
+            temp = 0.0030908 * raw - 25.04
 
             print(
-                "A{}: {:6d}  {:.4f} V".format(
+                "A{}: {:6d}  {:.4f} V  {:.2f}".format(
                     canal,
                     raw,
-                    voltage
+                    voltage,
+                    temp
                 )
             )
 

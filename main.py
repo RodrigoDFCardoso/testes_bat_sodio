@@ -34,6 +34,11 @@ WIFI_PASSWORD = "testebms2024"
 
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
 
+THINGSBOARD_HOST = "https://thingsboard.cloud"
+
+ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
+
+THINGSBOARD_URL = THINGSBOARD_HOST + "/api/v1/" + ACCESS_TOKEN + "/telemetry"
 
 # ============================================================
 # PROGRAMA PRINCIPAL
@@ -58,7 +63,7 @@ else:
         # filtrar erros para eventuais problemas (faltando)
         for i in range(4):
             ina226.configurar_ina226(options[i][1]) # para cada endereco do ina226 uma config é feita
-
+            #i = 3
             temp = ads1115.get_value(i)
             v_bus = ina226.ler_tensao_bus(options[i][1])
             corrente_mA = ina226.ler_corrente(options[i][1])
@@ -66,7 +71,7 @@ else:
             dado_envio = {
                 "timestamp": time.time() + 3* 3600,
                 "channel": options[i][0],
-                "temp": temp[1], # falta converter tensao para temperatura
+                "temp": temp[2], # falta converter tensao para temperatura
                 "voltage": v_bus,
                 "current": corrente_mA,
 
@@ -76,7 +81,8 @@ else:
             print(dado_envio) # testar como o print vai ficar antes de preencher a planilha
 
             # Envia
-            sucesso = send.enviar_dados(dado_envio, GOOGLE_SCRIPT_URL)
+            # sucesso = send.enviar_dados_google(dado_envio, GOOGLE_SCRIPT_URL)
+            sucesso = send.enviar_dados_google(dado_envio, THINGSBOARD_URL)
             # sucesso = True
 
             print()
@@ -93,4 +99,4 @@ else:
                 
         print("fim dos dados for")
 
-        time.sleep(10) #define a frequencia com que será enviado os dados
+        time.sleep(1) #define a frequencia com que será enviado os dados

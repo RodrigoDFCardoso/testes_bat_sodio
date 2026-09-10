@@ -43,10 +43,10 @@ def conectar_wifi(WIFI_SSID, WIFI_PASSWORD):
 
 
 # ============================================================
-# ENVIAR DADOS
+# ENVIAR DADOS GOOGLE
 # ============================================================
 
-def enviar_dados(dados, GOOGLE_SCRIPT_URL):
+def enviar_dados_google(dados, GOOGLE_SCRIPT_URL):
 
     resposta = None
 
@@ -118,3 +118,26 @@ def enviar_dados(dados, GOOGLE_SCRIPT_URL):
 
         if resposta is not None:
             resposta.close()
+
+
+# ============================================================
+# ENVIAR DADOS THINGSBOARD
+# ============================================================
+
+def enviar_dados_google(dados, THINGSBOARD_URL):
+    try:
+
+        resposta = requests.post(
+            THINGSBOARD_URL,
+            json=dados
+        )
+
+        print("Status:", resposta.status_code)
+        print("Resposta:", resposta.text)
+
+        resposta.close()
+
+    except Exception as e:
+
+        print("Erro:")
+        print(e)
