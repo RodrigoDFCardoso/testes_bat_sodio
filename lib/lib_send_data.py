@@ -42,93 +42,17 @@ def conectar_wifi(WIFI_SSID, WIFI_PASSWORD):
     return wlan
 
 
-# ============================================================
-# ENVIAR DADOS GOOGLE
-# ============================================================
-
-def enviar_dados_google(dados, GOOGLE_SCRIPT_URL):
-
-    resposta = None
-
-    try:
-
-        print()
-        print("Enviando dados...")
-
-        resposta = requests.post(
-            GOOGLE_SCRIPT_URL,
-            json=dados
-        )
-
-        print("Status:", resposta.status_code)
-
-        print("Resposta:")
-        print(resposta.text)
-
-        if resposta.status_code == 200:
-            print("ENVIO OK")
-            return True
-
-        elif resposta.status_code in (301, 302, 303, 307, 308):
-
-            print("Google retornou redirecionamento")
-
-            location = resposta.headers.get("Location")
-
-            print("Location:")
-            print(location)
-
-            resposta.close()
-            resposta = None
-
-            if location is None:
-                print("ERRO: Location não encontrado")
-                return False
-
-            print("Enviando novamente para o endereço redirecionado...")
-
-            resposta = requests.post(
-                location,
-                json=dados
-            )
-
-            print("Status final:", resposta.status_code)
-            print("Resposta final:")
-            print(resposta.text)
-
-            if resposta.status_code == 200:
-                print("ENVIO OK")
-                return True
-
-            return False
-
-        else:
-            print("ERRO HTTP")
-            return False
-
-    except Exception as e:
-
-        print()
-        print("ERRO AO ENVIAR:")
-        print(e)
-
-        return False
-
-    finally:
-
-        if resposta is not None:
-            resposta.close()
 
 
 # ============================================================
-# ENVIAR DADOS THINGSBOARD
+# ENVIAR DADOS
 # ============================================================
 
-def enviar_dados_google(dados, THINGSBOARD_URL):
+def enviar_dados(dados, URL_DADOS):
     try:
 
         resposta = requests.post(
-            THINGSBOARD_URL,
+            URL_DADOS,
             json=dados
         )
 

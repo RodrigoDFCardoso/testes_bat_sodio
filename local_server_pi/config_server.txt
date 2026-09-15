@@ -1,0 +1,29 @@
+hostname: databms
+
+user: bms
+pw: padrao
+
+CREATE DATABASE bms;
+CREATE USER bms_user WITH PASSWORD 'testebms2026';
+
+CREATE TABLE battery_data (
+    id BIGSERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL,
+    channel VARCHAR(10) NOT NULL,
+    temperature REAL,
+    voltage REAL,
+    current_ma REAL,
+    power_mw REAL
+);
+
+ping databms.local
+
+192.168.18.34
+
+ssh bms@databms
+
+cd ~/bms-server
+source venv/bin/activate
+uvicorn server:app --host 0.0.0.0 --port 8000
+
+comandos para acessar o banco de dados:

@@ -14,6 +14,14 @@ WIFI_PASSWORD = "20081995"
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
 
 
+THINGSBOARD_HOST = "https://thingsboard.cloud"
+
+ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
+
+THINGSBOARD_URL = THINGSBOARD_HOST + "/api/v1/" + ACCESS_TOKEN + "/telemetry"
+
+pi_url = "http://192.168.18.34:8000/data"
+
 # ============================================================
 # PROGRAMA PRINCIPAL
 # ============================================================
@@ -144,7 +152,7 @@ else:
 
     for dado in dados:
         dado_envio = {
-            "timestamp": dado[0],
+            "timestamp": time.time() + 3* 3600,
 
             "channel": dado[1],
             "temp": dado[2],
@@ -155,18 +163,8 @@ else:
         }
 
         # Envia
-        sucesso = send.enviar_dados(dado_envio, GOOGLE_SCRIPT_URL)
-
+        sucesso = send.enviar_dados(dado_envio, pi_url)
+        time.sleep(1)
         print()
-
-        if sucesso:
-            print("==============================")
-            print(" TESTE CONCLUIDO COM SUCESSO")
-            print("==============================")
-        else:
-            print("==============================")
-            print(" FALHA NO ENVIO")
-            print("==============================")
-            
             
     print("fim dos dados")
