@@ -173,7 +173,8 @@ while True:
 
             v = voltage(value)
             
-            temp = 0.00309077 * value + 5
+            #temp = 0.00309077 * value + 5
+            temp = 0.004103 * value - 2.394287
 
             print(
                 "A{}: {:6d} | {:.4f} V | {:.2f} ºC".format(

@@ -9,10 +9,10 @@ import lib_ads1115_get_data as ads1115
 import lib_ina226_get_data as ina226
 
 
-## enderecos ina's
-options = {0 : ['D', 76], 1 : ['C', 72], 2 : ['B', 68], 3 : ['A', 64]}
+## enderecos ina's e posicao adc
+#options = {0 : ['D', 76, 0], 1 : ['C', 72, 2], 2 : ['B', 68, 1], 3 : ['A', 64, 3]}
 
-
+options = {2 : ['B', 68, 1], 3 : ['A', 64, 3]}
 # ============================================================
 # Leitura de um canal do ADS1115
 # Resistor de ganho INA122 = 33k 1% 1/10 W - ganho aproximado de 11
@@ -27,11 +27,11 @@ options = {0 : ['D', 76], 1 : ['C', 72], 2 : ['B', 68], 3 : ['A', 64]}
 # CONFIGURAÇÕES
 # ============================================================
 
-# WIFI_SSID = "Ap1208_2G"
-# WIFI_PASSWORD = "20081995"
+WIFI_SSID = "Ap1208_2G"
+WIFI_PASSWORD = "20081995"
 
-WIFI_SSID = "Wifi BMS"
-WIFI_PASSWORD = "testebms2024"
+# WIFI_SSID = "Wifi BMS"
+# WIFI_PASSWORD = "testebms2024"
 
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
 
@@ -41,13 +41,15 @@ ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
 
 THINGSBOARD_URL = THINGSBOARD_HOST + "/api/v1/" + ACCESS_TOKEN + "/telemetry"
 
+URL = GOOGLE_SCRIPT_URL
+
 # ============================================================
 # PROGRAMA PRINCIPAL
 # ============================================================
 
 print()
 print("==============================")
-print(" TESTE PICO W + GOOGLE SHEETS")
+print(" TESTE PICO W + BMS")
 print("==============================")
 
 # Conecta ao Wi-Fi
@@ -62,7 +64,7 @@ else:
     while True:
         # corrigir ina e sensor de temperatura correspondente
         # filtrar erros para eventuais problemas (faltando)
-        for i in range(len(options)):
+        for i in options:
             ina226.configurar_ina226(options[i][1]) # para cada endereco do ina226 uma config é feita
             #i = 3
             temp = ads1115.get_value(i)
@@ -72,7 +74,7 @@ else:
             dado_envio = {
                 "timestamp": time.time() + 3* 3600,
                 "channel": options[i][0],
-                "temp": temp[2], # falta converter tensao para temperatura
+                "temp": temp[2],
                 "voltage": v_bus,
                 "current": corrente_mA,
 
@@ -82,22 +84,10 @@ else:
             print(dado_envio) # testar como o print vai ficar antes de preencher a planilha
 
             # Envia
-            # sucesso = send.enviar_dados(dado_envio, GOOGLE_SCRIPT_URL)
             sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
+            sucesso = send.enviar_dados(dado_envio, URL)
             # sucesso = True
 
             print()
-
-            if sucesso:
-                print("==============================")
-                print(" TESTE CONCLUIDO COM SUCESSO")
-                print("==============================")
-            else:
-                print("==============================")
-                print(" FALHA NO ENVIO")
-                print("==============================")
-                
-                
-        print("fim dos dados for")
 
         time.sleep(1) #define a frequencia com que será enviado os dados

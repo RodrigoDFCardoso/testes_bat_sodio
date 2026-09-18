@@ -164,7 +164,8 @@ def get_value(channel):
 
         value_voltage = voltage(value)
         
-        temp = 0.00309077 * value
+        # temp = 0.00309077 * value
+        temp = 0.004103 * value - 2.394287
 
         return value, value_voltage, temp
 
