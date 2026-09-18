@@ -42,12 +42,12 @@ def readConfig():
 
 # ============================================================
 # Leitura de um canal do ADS1115
-#
+# Resistor de ganho INA122 = 33k 1% 1/10 W - ganho aproximado de 11
 # channel:
-# 0 -> A0
-# 1 -> A1
-# 2 -> A2
-# 3 -> A3
+# 0 -> A0 -> Sensor 4 (D)
+# 1 -> A1 -> Sensor 2 (B)
+# 2 -> A2 -> Sensor 3 (C)
+# 3 -> A3 -> Sensor 1 (A)
 # ============================================================
 
 def readValueFrom(channel):
@@ -164,7 +164,7 @@ def get_value(channel):
 
         value_voltage = voltage(value)
         
-        temp = 0.0030908 * value - 25.04
+        temp = 0.00309077 * value
 
         return value, value_voltage, temp
 

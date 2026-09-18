@@ -172,12 +172,15 @@ while True:
             value = readValueFrom(channel)
 
             v = voltage(value)
+            
+            temp = 0.00309077 * value + 5
 
             print(
-                "A{}: {:6d} | {:.4f} V".format(
+                "A{}: {:6d} | {:.4f} V | {:.2f} ºC".format(
                     channel,
                     value,
-                    v
+                    v,
+                    temp
                 )
             )
 
