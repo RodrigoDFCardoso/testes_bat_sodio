@@ -3,6 +3,7 @@ import machine                # Necessário porque o código usa machine.ADC e m
 from machine import PWM, Pin  # PWM, GPIO
 from machine import SoftI2C
 from ssd1306 import SSD1306_I2C  # OLED 128x64 via I2C
+import framebuf
 
 # ------------------------------------------------
 #  I2C e OLED
@@ -15,18 +16,7 @@ i2c = SoftI2C(scl=Pin(15), sda=Pin(14))
 
 oled = SSD1306_I2C(128, 64, i2c)
 
-messages = [
-    "________________",
-    "",
-    "", 
-    "",
-    "",
-    "",
-    "",
-    "________________"
-]
-
-def update_oled(lines = messages):
+def update_oled(lines):
     """
     Desenha até 8 linhas (8 px de altura cada) na tela 128x64.
     Espera uma LISTA de strings. Se você passar uma string única,
@@ -36,7 +26,6 @@ def update_oled(lines = messages):
     for i, line in enumerate(lines):
         oled.text(line, 0, i * 8)
     oled.show()
-
 
 
 def scroll_text(text, delay=0.05):
@@ -53,9 +42,16 @@ def scroll_text(text, delay=0.05):
         time.sleep(delay)
 
 
+def update_massages(wifi = '', data = '', update = ''):
+    messages = [
+        "________________",
+        "",
+        "   BMS - NaION  ", 
+        "________________",
+        f" WIFI: {wifi}",
+        f" DATA: {data}",
+        f" Status: {update}",
+        "________________"
+    ]
 
-while True:
-    scroll_text("Sistema BMS iniciado")
-    scroll_text("Monitoramento ativo")
-    scroll_text("Temperatura OK")
-    scroll_text("Tensao normal")
+    update_oled(messages)

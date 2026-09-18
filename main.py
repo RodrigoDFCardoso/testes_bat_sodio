@@ -7,6 +7,7 @@ from machine import Pin, I2C, SoftI2C, PWM, ADC # confirmar uso de PWM e ADC
 import lib_send_data as send
 import lib_ads1115_get_data as ads1115
 import lib_ina226_get_data as ina226
+import lib_oled as oled
 
 
 ## enderecos ina's e posicao adc
@@ -55,6 +56,10 @@ print("==============================")
 # Conecta ao Wi-Fi
 wifi = send.conectar_wifi(WIFI_SSID, WIFI_PASSWORD)
 
+
+oled.scroll_text("Conectando WIFI")
+
+
 # wifi = True
 
 if wifi is None:
@@ -64,7 +69,9 @@ else:
     while True:
         # corrigir ina e sensor de temperatura correspondente
         # filtrar erros para eventuais problemas (faltando)
+        status_dados = "NO"
         for i in options:
+            sucesso = ""
             ina226.configurar_ina226(options[i][1]) # para cada endereco do ina226 uma config é feita
             #i = 3
             temp = ads1115.get_value(i)
@@ -80,14 +87,17 @@ else:
 
                 "power": ina226.calcular_potencia(v_bus, corrente_mA)
             }
+            if all(value is not None and value != "" for value in dado_envio.values()):
+                status_dados = 'OK'
+
+            oled.update_massages('ON', status_dados, sucesso)
 
             print(dado_envio) # testar como o print vai ficar antes de preencher a planilha
 
             # Envia
             sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
-            sucesso = send.enviar_dados(dado_envio, URL)
-            # sucesso = True
-
+            # sucesso = send.enviar_dados(dado_envio, URL)
+            oled.update_massages('ON', "OK", sucesso)
             print()
 
         time.sleep(1) #define a frequencia com que será enviado os dados

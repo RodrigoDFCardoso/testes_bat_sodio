@@ -60,6 +60,7 @@ def enviar_dados(dados, URL_DADOS):
         print("Resposta:", resposta.text)
 
         resposta.close()
+        return resposta.status_code
 
     except Exception as e:
 
