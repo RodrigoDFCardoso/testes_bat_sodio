@@ -28,11 +28,11 @@ options = {2 : ['B', 68, 1], 3 : ['A', 64, 3]}
 # CONFIGURAÇÕES
 # ============================================================
 
-WIFI_SSID = "Ap1208_2G"
-WIFI_PASSWORD = "20081995"
+#WIFI_SSID = "Ap1208_2G"
+#WIFI_PASSWORD = "20081995"
 
-# WIFI_SSID = "Wifi BMS"
-# WIFI_PASSWORD = "testebms2024"
+WIFI_SSID = "Wifi BMS"
+WIFI_PASSWORD = "testebms2024"
 
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
 
@@ -63,13 +63,16 @@ oled.scroll_text("Conectando WIFI")
 # wifi = True
 
 if wifi is None:
-    print("Não foi possível conectar ao Wi-Fi")
+    # print("Não foi possível conectar ao Wi-Fi")
+    status_wifi = "OFF"
 else:
-
+    status_wifi = "ON"
     while True:
         # corrigir ina e sensor de temperatura correspondente
         # filtrar erros para eventuais problemas (faltando)
         status_dados = "NO"
+        sucesso = "---"
+        oled.update_massages(status_wifi, status_dados, sucesso)
         for i in options:
             sucesso = ""
             ina226.configurar_ina226(options[i][1]) # para cada endereco do ina226 uma config é feita
@@ -81,23 +84,23 @@ else:
             dado_envio = {
                 "timestamp": time.time() + 3* 3600,
                 "channel": options[i][0],
-                "temp": temp[2],
-                "voltage": v_bus,
-                "current": corrente_mA,
+                "temp": round(temp[2], 2),
+                "voltage": round(v_bus, 3),
+                "current": round(corrente_mA, 3),
 
-                "power": ina226.calcular_potencia(v_bus, corrente_mA)
+                "power": round(ina226.calcular_potencia(v_bus, corrente_mA), 3)
             }
+
             if all(value is not None and value != "" for value in dado_envio.values()):
                 status_dados = 'OK'
 
-            oled.update_massages('ON', status_dados, sucesso)
-
-            print(dado_envio) # testar como o print vai ficar antes de preencher a planilha
+            # print(dado_envio) # testar como o print vai ficar antes de preencher a planilha
 
             # Envia
             sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
+            sucesso = send.enviar_dados(dado_envio, URL)
             # sucesso = send.enviar_dados(dado_envio, URL)
             oled.update_massages('ON', "OK", sucesso)
-            print()
+            # print()
 
-        time.sleep(1) #define a frequencia com que será enviado os dados
+        time.sleep(5) #define a frequencia com que será enviado os dados
