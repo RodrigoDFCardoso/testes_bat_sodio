@@ -1,0 +1,57 @@
+{
+  "type": "SCRIPT",
+  "name": "Roteador de Canais BMS",
+  "debugSettings": null,
+  "configurationVersion": 0,
+  "configuration": {
+    "type": "SCRIPT",
+    "arguments": {
+      "channel": {
+        "refEntityKey": {
+          "key": "channel",
+          "type": "TS_LATEST"
+        }
+      },
+      "temp": {
+        "refEntityKey": {
+          "key": "temp",
+          "type": "TS_LATEST"
+        }
+      },
+      "voltage": {
+        "refEntityKey": {
+          "key": "voltage",
+          "type": "TS_LATEST"
+        }
+      },
+      "current": {
+        "refEntityKey": {
+          "key": "current",
+          "type": "TS_LATEST"
+        }
+      },
+      "power": {
+        "refEntityKey": {
+          "key": "power",
+          "type": "TS_LATEST"
+        }
+      }
+    },
+    "expression": "var ch = channel != null ? ('' + channel).trim().toUpperCase() : '';\nvar res = {};\nif (ch == 'A') {\n    res.voltage_A = voltage;\n    res.current_A = current;\n    res.power_A = power;\n    res.temp_A = temp;\n} else if (ch == 'B') {\n    res.voltage_B = voltage;\n    res.current_B = current;\n    res.power_B = power;\n    res.temp_B = temp;\n} else if (ch == 'C') {\n    res.voltage_C = voltage;\n    res.current_C = current;\n    res.power_C = power;\n    res.temp_C = temp;\n} else if (ch == 'D') {\n    res.voltage_D = voltage;\n    res.current_D = current;\n    res.power_D = power;\n    res.temp_D = temp;\n}\nreturn res;",
+    "output": {
+      "type": "TIME_SERIES",
+      "strategy": {
+        "type": "IMMEDIATE",
+        "ttl": 0,
+        "saveTimeSeries": true,
+        "saveLatest": true,
+        "sendWsUpdate": true,
+        "processCfs": true
+      }
+    }
+  },
+  "additionalInfo": {
+    "aiGenerated": true,
+    "aiGeneratedBy": "AI Assistant"
+  }
+}

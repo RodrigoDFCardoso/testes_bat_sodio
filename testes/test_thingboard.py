@@ -17,6 +17,10 @@ ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
 
 URL = THINGSBOARD_HOST + "/api/v1/" + ACCESS_TOKEN + "/telemetry"
 
+#curl -v -X POST http://192.168.18.39:8080/api/v1/mormQYSFZyyrAa5CTcHS/telemetry --header Content-Type:application/json --data "{temperature:25}"
+
+# teste thingsboard local
+URL = "http://192.168.18.39:8080/api/v1/mormQYSFZyyrAa5CTcHS/telemetry"
 
 # ============================================================
 # CONECTAR AO WI-FI
