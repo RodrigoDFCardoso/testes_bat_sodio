@@ -7,3 +7,5 @@ Bibliotecas qu epodem ajudar:
 - https://github.com/joy-it/ADS1115-Micropython
 - https://github.com/wollewald/ADS1115_mpy
 - https://pypi.org/project/ADS1115-mic-py/#files
+
+https://github.com/bharanidharanrangaraj/interfacing_sd_card_with_raspberrypi_pico
