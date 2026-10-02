@@ -10,13 +10,13 @@ spi = SoftSPI(                # Removido o número do barramento (0)
     baudrate=1_000_000,
     polarity=0,
     phase=0,
-    sck=Pin(28),
-    mosi=Pin(17),
+    sck=Pin(2),
+    mosi=Pin(3),
     miso=Pin(16)
 )
 
 # Chip Select
-cs = Pin(1, Pin.OUT)
+cs = Pin(17, Pin.OUT)
 
 # =========================
 # Inicializa cartão SD

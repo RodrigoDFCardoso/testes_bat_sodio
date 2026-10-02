@@ -1,17 +1,17 @@
-from machine import Pin, SPI
+from machine import Pin, SoftSPI  # Alterado para SoftSPI para permitir a mistura de pinos
 import os
 import time
+import sdcard
 
 # =========================
-# SPI
+# SPI (Emulação por Software)
 # =========================
-spi = SPI(
-    0,
+spi = SoftSPI(                # Removido o número do barramento (0)
     baudrate=1_000_000,
     polarity=0,
     phase=0,
-    sck=Pin(18),
-    mosi=Pin(19),
+    sck=Pin(2),
+    mosi=Pin(3),
     miso=Pin(16)
 )
 
@@ -55,6 +55,8 @@ def salvar_dados(dados):
         arquivo.write(
             ";".join(str(valor) for valor in dados) + "\n"
         )
+        
+        print("sdcard gravado")
         
 
 

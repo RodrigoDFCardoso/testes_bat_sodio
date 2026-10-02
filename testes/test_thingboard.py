@@ -114,4 +114,4 @@ while True:
             print("Erro:")
             print(e)
 
-    time.sleep(10)
+    time.sleep(1)
