@@ -32,6 +32,7 @@ os.mount(sd, "/sd")
 def salvar_dados(dados):
     # dados:
     # [timestamp, channel, temperature, voltage, current, power]
+    #print(dados)
 
     timestamp = dados[0]
 
@@ -50,10 +51,11 @@ def salvar_dados(dados):
 
     # Abre para adicionar
     with open(nome_arquivo, "a") as arquivo:
-
+        dado = f'{int(dados[0])};{str(dados[1])};{float(dados[2])};{float(dados[3])};{float(dados[4])};{float(dados[5])}'
+        print(dado)
         # Grava os dados
         arquivo.write(
-            ";".join(str(valor) for valor in dados) + "\n"
+            dado + "\n"
         )
         
         print("sdcard gravado")

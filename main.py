@@ -13,6 +13,7 @@ import lib_send_data as send
 import lib_ads1115_get_data as ads1115
 import lib_ina226_get_data as ina226
 import lib_oled as oled
+import lib_save_sdcard as save_local
 
 
 ## enderecos ina's e posicao adc
@@ -88,9 +89,10 @@ else:
             temp = ads1115.get_value(i)
             v_bus = ina226.ler_tensao_bus(options[i][1])
             corrente_mA = ina226.ler_corrente(options[i][1])
-
+            timestamp = time.time()
+            
             dado_envio = {
-                "timestamp": time.time(),
+                "timestamp": timestamp,
                 "channel": options[i][0],
                 "temp": round(temp[2], 2),
                 "voltage": round(v_bus, 3),
@@ -98,7 +100,8 @@ else:
 
                 "power": round(ina226.calcular_potencia(v_bus, corrente_mA), 3)
             }
-
+            dados_local = [timestamp, options[i][0], round(temp[2], 2), round(v_bus, 3), round(corrente_mA, 3), round(ina226.calcular_potencia(v_bus, corrente_mA), 3)]
+            
             if all(value is not None and value != "" for value in dado_envio.values()):
                 status_dados = 'OK'
 
@@ -107,6 +110,7 @@ else:
             # Envia
             #sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
             sucesso = send.enviar_dados(dado_envio, URL)
+            save_local.salvar_dados(dados_local)
             # sucesso = send.enviar_dados(dado_envio, URL)
             oled.update_massages(status_wifi, status_dados, sucesso)
             # print()
