@@ -1,1 +1,7 @@
 sudo nmcli device wifi hotspot ifname wlan0 con-name Wifi-BMS ssid Wifi-BMS password testebms2026
+
+sudo nmcli connection down Wifi-BMS
+
+sudo nmcli connection up Wifi-BMS
+
+sudo nmcli connection delete Wifi-BMS

@@ -39,8 +39,11 @@ options = {3 : ['A', 64, 3]}
 #WIFI_SSID = "Ap1208_2G"
 #WIFI_PASSWORD = "20081995"
 
-WIFI_SSID = "Wifi BMS"
-WIFI_PASSWORD = "testebms2024"
+#WIFI_SSID = "Wifi BMS"
+#WIFI_PASSWORD = "testebms2024"
+
+WIFI_SSID = "Wifi-BMS"
+WIFI_PASSWORD = "testebms2026"
 
 GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
 
@@ -48,7 +51,12 @@ THINGSBOARD_HOST = "https://thingsboard.cloud"
 
 ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
 
-THINGSBOARD_URL = THINGSBOARD_HOST + "/api/v1/" + ACCESS_TOKEN + "/telemetry"
+#THINGSBOARD_URL = "http://10.42.0.1:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry"
+
+THINGSBOARD_URL = "http://10.145.186.144:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry"
+
+
+# curl -v -X POST http://192.168.137.212:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry --header Content-Type:application/json --data "{temperature:25}"
 
 URL = GOOGLE_SCRIPT_URL
 
@@ -108,11 +116,12 @@ else:
             # print(dado_envio) # testar como o print vai ficar antes de preencher a planilha
 
             # Envia
-            #sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
+            sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
             sucesso = send.enviar_dados(dado_envio, URL)
             save_local.salvar_dados(dados_local)
             # sucesso = send.enviar_dados(dado_envio, URL)
             oled.update_massages(status_wifi, status_dados, sucesso)
             # print()
 
-        time.sleep(5) #define a frequencia com que será enviado os dados
+        time.sleep(10) #define a frequencia com que será enviado os dados
+
