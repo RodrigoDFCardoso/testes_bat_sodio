@@ -1,0 +1,227 @@
+GUIA — SERVIDOR NTP LOCAL NA RASPBERRY PI
+Hotspot Wifi-BMS | Raspberry Pi OS | Cliente: Raspberry Pi Pico W
+
+OBJETIVO
+Criar um servidor NTP local na Raspberry Pi, acessível pela Pico W através do hotspot.
+Endereço do servidor: 10.42.0.1
+Porta: UDP 123
+Arquivo do servidor: /home/bms/ntp_server.py
+Serviço systemd: ntp-local.service
+
+IMPORTANTE
+- A Raspberry Pi deve estar com o relógio correto.
+- O servidor local fornece a hora do sistema da Raspberry Pi; ele não sincroniza sozinho com uma fonte externa.
+- O código abaixo é um servidor NTP básico para uso controlado no hotspot, não um substituto completo de um servidor NTP robusto.
+- Execute os comandos na Raspberry Pi com o usuário bms, salvo quando houver sudo.
+- Se a porta UDP 123 já estiver ocupada, não pare serviços sem antes identificar o processo.
+
+1. VERIFICAR O RELÓGIO E A PORTA
+
+timedatectl
+sudo ss -lunp | grep ':123'
+
+Confirme que o relógio está correto e que não há outro processo ocupando a porta UDP 123.
+
+2. CRIAR O PROGRAMA DO SERVIDOR NTP
+
+nano /home/bms/ntp_server.py
+
+Cole o código abaixo:
+
+import socket
+import struct
+import time
+
+HOST = "10.42.0.1"
+PORT = 123
+NTP_DELTA = 2208988800
+NTP_SCALE = 1 << 32
+
+def ntp_timestamp():
+    now = time.time()
+    seconds = int(now)
+    fraction = int((now - seconds) * NTP_SCALE)
+    return ((seconds + NTP_DELTA) << 32) | fraction
+
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server.bind((HOST, PORT))
+
+print("Servidor NTP iniciado em {}:{}".format(HOST, PORT), flush=True)
+
+while True:
+    try:
+        data, client = server.recvfrom(1024)
+
+        # Aceita somente clientes da rede do hotspot
+        if not client[0].startswith("10.42.0."):
+            continue
+
+        if len(data) < 48:
+            continue
+
+        # Timestamp de transmissão enviado pelo cliente
+        originate = struct.unpack("!Q", data[40:48])[0]
+
+        received = ntp_timestamp()
+        transmitted = ntp_timestamp()
+
+        # LI=0, VN=4, Mode=4 (server), stratum=2
+        header = struct.pack(
+            "!BBBbII4s",
+            0x24, 2, 6, -20,
+            0, 0, b"LOCL"
+        )
+
+        response = header + struct.pack(
+            "!QQQQ",
+            received,       # Reference timestamp
+            originate,      # Originate timestamp
+            received,       # Receive timestamp
+            transmitted     # Transmit timestamp
+        )
+
+        server.sendto(response, client)
+        print("Resposta NTP enviada para {}".format(client[0]), flush=True)
+
+    except Exception as error:
+        print("Erro: {}".format(error), flush=True)
+
+Salve com Ctrl+O, pressione Enter e saia com Ctrl+X.
+
+3. TESTAR O SERVIDOR MANUALMENTE
+
+Verifique novamente se a porta está livre:
+
+sudo ss -lunp | grep ':123'
+
+Se não houver outro serviço usando a porta UDP 123, inicie o servidor:
+
+sudo python3 /home/bms/ntp_server.py
+
+A mensagem esperada é:
+Servidor NTP iniciado em 10.42.0.1:123
+
+Deixe o programa aberto e, na Pico W, teste:
+
+import ntptime
+import time
+
+ntptime.host = "10.42.0.1"
+
+try:
+    ntptime.settime()
+    print("Sincronização concluída!")
+    print("UTC:", time.localtime())
+    print("Timestamp Unix:", time.time())
+except Exception as erro:
+    print("Erro NTP:", erro)
+
+Quando o teste terminar, interrompa o servidor manual com Ctrl+C. Se a porta estiver ocupada ou aparecer um erro de bind, investigue antes de continuar.
+
+4. CRIAR O SERVIÇO SYSTEMD
+
+Crie o arquivo de serviço:
+
+sudo nano /etc/systemd/system/ntp-local.service
+
+Cole:
+
+[Unit]
+Description=Servidor NTP local para o hotspot Wifi-BMS
+Wants=network-online.target
+After=NetworkManager.service network-online.target
+
+[Service]
+Type=simple
+User=bms
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+ExecStart=/usr/bin/python3 /home/bms/ntp_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+Salve com Ctrl+O, pressione Enter e saia com Ctrl+X.
+
+5. HABILITAR A INICIALIZAÇÃO AUTOMÁTICA
+
+Execute um comando por vez:
+
+sudo systemctl daemon-reload
+sudo systemctl enable ntp-local.service
+sudo systemctl start ntp-local.service
+
+6. VERIFICAR O SERVIÇO
+
+Ver estado:
+
+sudo systemctl status ntp-local.service
+
+O estado esperado é:
+Active: active (running)
+
+Verificar a porta:
+
+sudo ss -lunp | grep ':123'
+
+Ver logs em tempo real:
+
+sudo journalctl -u ntp-local.service -f
+
+Para sair do acompanhamento dos logs, pressione Ctrl+C. Isso não interrompe o serviço.
+
+Consultar os logs desta inicialização:
+
+sudo journalctl -u ntp-local.service -b
+
+7. CONFIRMAR QUE INICIA APÓS REINICIAR
+
+Quando for conveniente, reinicie a Raspberry Pi:
+
+sudo reboot
+
+Após a inicialização, execute:
+
+systemctl is-enabled ntp-local.service
+systemctl is-active ntp-local.service
+
+Resultados esperados:
+enabled
+active
+
+A Pico W pode usar:
+
+import ntptime
+ntptime.host = "10.42.0.1"
+ntptime.settime()
+
+8. COMANDOS ÚTEIS
+
+Reiniciar o serviço:
+sudo systemctl restart ntp-local.service
+
+Parar o serviço:
+sudo systemctl stop ntp-local.service
+
+Iniciar o serviço:
+sudo systemctl start ntp-local.service
+
+Desabilitar inicialização automática:
+sudo systemctl disable ntp-local.service
+
+Ver logs recentes:
+sudo journalctl -u ntp-local.service -n 50 --no-pager
+
+9. OBSERVAÇÕES IMPORTANTES
+
+- O serviço depende do hotspot estar ativo e de a Raspberry Pi possuir o IP 10.42.0.1 na interface wlan0.
+- A configuração de systemd usa o usuário bms e concede a capacidade de abrir portas privilegiadas, necessária para UDP 123.
+- O servidor entrega o horário do sistema da Raspberry Pi. Se ela perder a hora correta, a Pico W também poderá receber um horário incorreto.
+- timedatectl mostrar “System clock synchronized: yes” indica que o sistema considera o relógio sincronizado, mas a fonte e a atualização da hora dependem da configuração NTP do sistema.
+- O programa é uma implementação simples para o ambiente local. Para precisão, segurança e operação de longo prazo, prefira um servidor NTP/Chrony completo quando houver possibilidade de instalá-lo e configurá-lo adequadamente.
+- Se o serviço falhar, verifique:
+  sudo journalctl -u ntp-local.service -b
+  sudo ss -lunp | grep ':123'
+  ip -4 addr show wlan0
