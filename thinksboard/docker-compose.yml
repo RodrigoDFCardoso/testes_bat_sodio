@@ -1,0 +1,56 @@
+services:
+  postgres:
+    restart: always
+    image: "postgres:15"  # Rebaixado para v15 pois o TB 4.3 não homologou nativamente o Postgres 18
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_DB: thingsboard
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d thingsboard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  thingsboard:
+    restart: always
+    image: "thingsboard/tb-postgres:latest" # Imagem comunitária pura v4.3
+    ports:
+      - "8080:8080"
+      - "1883:1883"
+      - "8883:8883"
+      - "9090:9090"
+      - "7070:7070"
+      - "5683-5688:5683-5688/udp"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      TB_SERVICE_ID: tb-node
+      DATABASE_TS_TYPE: sql
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thingsboard
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    volumes:
+      - tb-data:/data
+      - tb-logs:/var/log/thingsboard
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+    name: tb-postgres-data
+    driver: local
+  tb-data:
+    name: tb-data-v43
+    driver: local
+  tb-logs:
+    name: tb-logs-v43
+    driver: local
