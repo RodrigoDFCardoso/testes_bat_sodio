@@ -17,11 +17,11 @@ import lib_save_sdcard as save_local
 
 
 ## enderecos ina's e posicao adc
-#options = {0 : ['D', 76, 0], 1 : ['C', 72, 2], 2 : ['B', 68, 1], 3 : ['A', 64, 3]}
+options = {0 : ['D', 76, 0], 1 : ['C', 72, 2], 2 : ['B', 68, 1], 3 : ['A', 64, 3]}
 
 #options = {2 : ['B', 68, 1], 3 : ['A', 64, 3]}
 
-options = {3 : ['A', 64, 3]}
+#options = {3 : ['A', 64, 3]}
 # ============================================================
 # Leitura de um canal do ADS1115
 # Resistor de ganho INA122 = 33k 1% 1/10 W - ganho aproximado de 11
@@ -45,7 +45,7 @@ options = {3 : ['A', 64, 3]}
 WIFI_SSID = "Wifi-BMS"
 WIFI_PASSWORD = "testebms2026"
 
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec"
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec" #alterar para nova planilha
 
 THINGSBOARD_HOST = "https://thingsboard.cloud"
 
@@ -53,10 +53,10 @@ ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
 
 #THINGSBOARD_URL = "http://10.42.0.1:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry"
 
-THINGSBOARD_URL = "http://10.145.186.144:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry"
+THINGSBOARD_URL = "http://100.64.33.242:8080/api/v1/NS1fOR9RTQh4pvEPuvam/telemetry"
 
 
-# curl -v -X POST http://192.168.137.212:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry --header Content-Type:application/json --data "{temperature:25}"
+# curl -v -X POST http://100.64.33.242:8080/api/v1/NS1fOR9RTQh4pvEPuvam/telemetry --header Content-Type:application/json --data "{temperature:25}"
 
 URL = GOOGLE_SCRIPT_URL
 
@@ -72,6 +72,8 @@ print("==============================")
 # Conecta ao Wi-Fi
 wifi = send.conectar_wifi(WIFI_SSID, WIFI_PASSWORD)
 
+# Servidor NTP da raspy (configurado no hotspot)
+ntptime.host = "10.42.0.1"
 
 oled.scroll_text("Conectando WIFI")
 
