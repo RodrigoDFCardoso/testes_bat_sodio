@@ -45,16 +45,11 @@ options = {0 : ['D', 76, 0], 1 : ['C', 72, 2], 2 : ['B', 68, 1], 3 : ['A', 64, 3
 WIFI_SSID = "Wifi-BMS"
 WIFI_PASSWORD = "testebms2026"
 
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpPVJgj-tuBg3B9PkMabwlyUM02s5aTYDSF29srKwAfO5FiZ5_H7hCgy6WplV_nc1__A/exec" #alterar para nova planilha
-
-THINGSBOARD_HOST = "https://thingsboard.cloud"
-
-ACCESS_TOKEN = "TPoUBv8x6rCMwLUqLBr5"
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzP0WUOjfIKtyOI81JoLAwmR_9ZiGe3wrLR09LSm1rddZa9b7Ho4UKd3N4-PWtVROFe/exec" 
 
 #THINGSBOARD_URL = "http://10.42.0.1:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry"
 
 THINGSBOARD_URL = "http://100.64.33.242:8080/api/v1/NS1fOR9RTQh4pvEPuvam/telemetry"
-
 
 # curl -v -X POST http://100.64.33.242:8080/api/v1/NS1fOR9RTQh4pvEPuvam/telemetry --header Content-Type:application/json --data "{temperature:25}"
 
@@ -119,11 +114,13 @@ else:
 
             # Envia
             sucesso = send.enviar_dados(dado_envio, THINGSBOARD_URL)
-            sucesso = send.enviar_dados(dado_envio, URL)
+            #sucesso = send.enviar_dados(dado_envio, URL) #sem acesso a internet
             save_local.salvar_dados(dados_local)
             # sucesso = send.enviar_dados(dado_envio, URL)
             oled.update_massages(status_wifi, status_dados, sucesso)
             # print()
 
         time.sleep(10) #define a frequencia com que será enviado os dados
+
+
 
