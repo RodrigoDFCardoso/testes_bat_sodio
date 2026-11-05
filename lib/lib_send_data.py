@@ -1,6 +1,7 @@
 import network
 import time
 import requests
+import lib_oled as oled
 
 # ============================================================
 # CONECTAR AO WI-FI
@@ -28,7 +29,7 @@ def conectar_wifi(WIFI_SSID, WIFI_PASSWORD):
         if time.time() - inicio > timeout:
             print("ERRO: timeout ao conectar no Wi-Fi")
             return None
-
+        oled.scroll_text("... conectando ...")
         print(".", end="")
         time.sleep(1)
 
