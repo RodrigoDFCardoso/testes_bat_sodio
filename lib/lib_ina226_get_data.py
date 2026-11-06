@@ -15,7 +15,8 @@ from machine import PWM, Pin  # PWM, GPIO
 from machine import SoftI2C, ADC
 import time
 
-shunt_resistor = 0.1
+#shunt_resistor = 0.1
+shunt_resistor = 0.025
 
 i2c = SoftI2C(scl=Pin(19), sda=Pin(18))
 
