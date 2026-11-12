@@ -1,12 +1,12 @@
 import network
 import time
 import requests
-import ntptime
+#import ntptime
 from machine import Pin, I2C, SoftI2C, PWM, ADC # confirmar uso de PWM e ADC
 from machine import RTC
 
 # Fuso horário de Brasília
-UTC_OFFSET = -3 * 60 * 60
+#UTC_OFFSET = -3 * 60 * 60
 
 # libs minha
 import lib_send_data as send
@@ -14,6 +14,7 @@ import lib_ads1115_get_data as ads1115
 import lib_ina226_get_data as ina226
 import lib_oled as oled
 import lib_save_sdcard as save_local
+import lib_ntp_usb as ntp_usb #necessario servico de envio de ntp via serial
 
 
 ## enderecos ina's e posicao adc
@@ -45,7 +46,7 @@ options = {0 : ['D', 76, 0], 1 : ['C', 72, 2], 2 : ['B', 68, 1], 3 : ['A', 64, 3
 WIFI_SSID = "Wifi-BMS"
 WIFI_PASSWORD = "testebms2026"
 
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzP0WUOjfIKtyOI81JoLAwmR_9ZiGe3wrLR09LSm1rddZa9b7Ho4UKd3N4-PWtVROFe/exec" 
+#GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzP0WUOjfIKtyOI81JoLAwmR_9ZiGe3wrLR09LSm1rddZa9b7Ho4UKd3N4-PWtVROFe/exec" 
 
 #THINGSBOARD_URL = "http://10.42.0.1:8080/api/v1/F0vV2VrHmdiAKJ5HEzZQ/telemetry"
 
@@ -53,7 +54,7 @@ THINGSBOARD_URL = "http://100.64.33.242:8080/api/v1/NS1fOR9RTQh4pvEPuvam/telemet
 
 # curl -v -X POST http://100.64.33.242:8080/api/v1/NS1fOR9RTQh4pvEPuvam/telemetry --header Content-Type:application/json --data "{temperature:25}"
 
-URL = GOOGLE_SCRIPT_URL
+#URL = GOOGLE_SCRIPT_URL
 
 # ============================================================
 # PROGRAMA PRINCIPAL
@@ -67,8 +68,9 @@ print("==============================")
 # Conecta ao Wi-Fi
 wifi = send.conectar_wifi(WIFI_SSID, WIFI_PASSWORD)
 
-# Servidor NTP da raspy (configurado no hotspot)
-ntptime.host = "10.42.0.1"
+# Servidor NTP da raspy (configurado no hotspot ou serial)
+#ntptime.host = "10.42.0.1"
+sincronizado = ntp_usb.sincronizar_horario(timeout=5)
 
 oled.scroll_text("Conectando WIFI")
 
@@ -80,7 +82,8 @@ if wifi is None:
     status_wifi = "OFF"
 else:
     status_wifi = "ON"
-    ntptime.settime()
+    oled.scroll_text("Unix Timestamp:", timestamp)
+    #ntptime.settime()
     while True:
         # corrigir ina e sensor de temperatura correspondente
         # filtrar erros para eventuais problemas (faltando)
@@ -94,7 +97,8 @@ else:
             temp = ads1115.get_value(i)
             v_bus = ina226.ler_tensao_bus(options[i][1])
             corrente_mA = ina226.ler_corrente(options[i][1])
-            timestamp = time.time()
+            #timestamp = time.time()
+            timestamp = ntp_usb.obter_timestamp()
             
             dado_envio = {
                 "timestamp": timestamp,
