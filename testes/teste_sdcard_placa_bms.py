@@ -6,12 +6,28 @@ import sdcard
 # =========================
 # SPI (Emulação por Software)
 # =========================
+
+# bms
+"""
 spi = SoftSPI(                # Removido o número do barramento (0)
     baudrate=1_000_000,
     polarity=0,
     phase=0,
     sck=Pin(2),
     mosi=Pin(3),
+    miso=Pin(16)
+)
+
+# Chip Select
+cs = Pin(17, Pin.OUT)
+"""
+#v5.2
+spi = SoftSPI(                # Removido o número do barramento (0)
+    baudrate=1_000_000,
+    polarity=0,
+    phase=0,
+    sck=Pin(18),
+    mosi=Pin(19),
     miso=Pin(16)
 )
 
